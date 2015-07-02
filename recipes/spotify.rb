@@ -23,6 +23,14 @@ remote_file "#{Chef::Config[:file_cache_path]}/SpotifyInstaller.zip" do
 end
 
 execute "unzip-spotify" do
-  command "unzip #{Chef::Config[:file_cache_path]}/SpotifyInstaller.zip -d /Applications"
+  command "unzip #{Chef::Config[:file_cache_path]}/SpotifyInstaller.zip -d #{Chef::Config[:file_cache_path]}"
   action :nothing
+  notifies :run, "execute[install-spotify]", :immediately
+end
+
+execute "install-spotify" do
+  cwd Chef::Config[:file_cache_path]
+  command "open 'Install Spotify.app'"
+  action :nothing
+  not_if do ::File.exists?('/Applications/Spotify.app') end
 end
